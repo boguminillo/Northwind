@@ -1,0 +1,74 @@
+﻿@page "/categories"
+
+@using System.Net;
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Categories</PageTitle>
+<h3>Categories</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Categories)
+        {
+            int id = category.CategoryId;
+            <tr>
+                <td>@category.CategoryName</td>
+                <td>@category.Description</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditCategory(id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteCategory(id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="CreateCategory">Create Category</button>
+
+@code {
+
+    private List<CategoryDTO> Categories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await Http.GetFromJsonAsync<List<CategoryDTO>>(Endpoints.GetPostCategories());
+    }
+
+    private async Task DeleteCategory(int categoryId)
+    {
+        HttpResponseMessage msg = await Http.DeleteAsync(Endpoints.UpdateDeleteCategory(categoryId));
+        switch (msg.StatusCode)
+        {
+            case HttpStatusCode.OK:
+                Categories = await Http.GetFromJsonAsync<List<CategoryDTO>>(Endpoints.GetPostCategories());
+                break;
+            case HttpStatusCode.Unauthorized:
+                _ = JSRuntime.InvokeVoidAsync("alert", "Cannot delete category with products");
+                //_ = JSRuntime.InvokeVoidAsync("alert", msg.Content.ReadAsStringAsync().Result);
+                break;
+            case HttpStatusCode.NotFound:
+                _ = JSRuntime.InvokeVoidAsync("alert", "Category does not exist");
+                break;
+        }
+    }
+
+    private void CreateCategory()
+    {
+        NavigationManager.NavigateTo("/category");
+    }
+
+    private void EditCategory(int categoryId)
+    {
+        NavigationManager.NavigateTo($"/category/{categoryId}");
+    }
+}

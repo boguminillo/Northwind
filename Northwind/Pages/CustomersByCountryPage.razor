@@ -1,0 +1,89 @@
+﻿@page "/customersbycountry"
+
+@inject HttpClient Http
+
+<PageTitle>Customers by country</PageTitle>
+<h3>Customers by country</h3>
+
+<InputSelect @bind-Value="SelectedCountry" class="form-control">
+    @if (String.IsNullOrEmpty(SelectedCountry))
+    {
+        <option value="">Select a country</option>
+    }
+    @foreach (var country in Countries)
+    {
+        <option value="@country">@country</option>
+    }
+</InputSelect>
+
+@if (Customers != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>Company Name</th>
+                <th>Contact Name</th>
+                <th>Contact Title</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Region</th>
+                <th>Postal Code</th>
+                <th>Country</th>
+                <th>Phone</th>
+                <th>Fax</th>
+                <th>#Orders</th>
+                <th>#CustomerTypes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CustomerDTO customer in Customers)
+            {
+                <tr>
+                    <td>@customer.CustomerId</td>
+                    <td>@customer.CompanyName</td>
+                    <td>@customer.ContactName</td>
+                    <td>@customer.ContactTitle</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.City</td>
+                    <td>@customer.Region</td>
+                    <td>@customer.PostalCode</td>
+                    <td>@customer.Country</td>
+                    <td>@customer.Phone</td>
+                    <td>@customer.Fax</td>
+                    <td>@customer.Orders</td>
+                    <td>@customer.CustomerTypes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    List<string> Countries = new();
+
+    public string SelectedCountry
+    {
+        get => _selectedCountry;
+        set
+        {
+            _selectedCountry = value;
+            GetCustomers();
+        }
+    }
+    private string _selectedCountry = string.Empty;
+
+    List<CustomerDTO> Customers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Countries = await Http.GetFromJsonAsync<List<string>>(Endpoints.GetCustomerCountries());
+    }
+
+    private async Task GetCustomers()
+    {
+        Customers = await Http.GetFromJsonAsync<List<CustomerDTO>>(Endpoints.GetCustomersByCountry(SelectedCountry));
+        StateHasChanged();
+    }
+}

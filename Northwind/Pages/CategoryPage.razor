@@ -1,0 +1,69 @@
+﻿@page "/category"
+@page "/category/{id:int}"
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Category</PageTitle>
+    <h3>Create a new Category</h3>
+}
+else
+{
+    <PageTitle>Edit a Category</PageTitle>
+    <h3>Edit a Category</h3>
+}
+
+<EditForm Model="myCategory" OnSubmit="HandleSubmit">
+    <div>
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="myCategory.CategoryName" class="form-control"/>
+    </div>
+    <div>
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="myCategory.Description" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">@btnText</button>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    string btnText = string.Empty;
+
+    CategoryDTO myCategory = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id == null)
+        {
+            // create
+            btnText = "Create Category";
+        }
+        else
+        {
+            // update
+            myCategory = await Http.GetFromJsonAsync<CategoryDTO>(Endpoints.UpdateDeleteCategory(Id.Value));
+            btnText = "Update Category";
+        }
+    }
+
+    private async void HandleSubmit()
+    {
+        if (Id == null)
+        {
+            // create
+            await Http.PostAsJsonAsync(Endpoints.GetPostCategories(), myCategory);
+        }
+        else
+        {
+            // update
+            await Http.PutAsJsonAsync(Endpoints.UpdateDeleteCategory(Id.Value), myCategory);
+        }
+        NavigationManager.NavigateTo("/categories");
+    }
+
+}

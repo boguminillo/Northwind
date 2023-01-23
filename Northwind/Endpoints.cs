@@ -33,6 +33,16 @@ public class Endpoints
         return "https://localhost:7136/northwind/employees/checkname";
     }
 
+    public static string CreateEmployee()
+    {
+        return "https://localhost:7136/northwind/employees";
+    }
+
+    public static string GetUpdateDeleteEmployee(int id)
+    {
+        return $"https://localhost:7136/northwind/employees/{id}";
+    }
+
     public static string SetEmployeeLastName()
     {
         return "https://localhost:7136/northwind/employees/setlastname";

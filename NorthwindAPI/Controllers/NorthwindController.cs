@@ -30,7 +30,7 @@ public class NorthwindController : ControllerBase
     public async Task<ActionResult<dynamic>> GetCategory(int id)
     {
         Category category = await _context.Categories.FindAsync(id);
-        return Ok(new {category.CategoryId, category.CategoryName, category.Description});
+        return Ok(new { category.CategoryId, category.CategoryName, category.Description });
     }
 
     [HttpPost("categories")]
@@ -54,10 +54,7 @@ public class NorthwindController : ControllerBase
     {
         Category Category = await _context.Categories.FindAsync(id);
 
-        if (Category == null)
-        {
-            return NotFound("Category not found");
-        }
+        if (Category == null) return NotFound("Category not found");
 
         try
         {
@@ -86,22 +83,67 @@ public class NorthwindController : ControllerBase
     }
 
     [HttpPost("employees/checkname")]
-    public async Task<ActionResult> CheckName(string firstName, string lastName)
+    public async Task<ActionResult> CheckName(Employee employee)
     {
-        Employee employee = await _context.Employees.FirstOrDefaultAsync(e => e.FirstName == firstName);
+        Employee dbEmployee = await _context.Employees.FirstOrDefaultAsync(e => e.FirstName == employee.FirstName && e.LastName == employee.LastName);
+        if (dbEmployee == null) return NotFound("Employee not found");
+        return Ok(dbEmployee.EmployeeId);
+    }
+
+    [HttpGet("employees/{id}")]
+    public async Task<ActionResult<Employee>> GetEmployee(int id)
+    {
+        Employee employee = await _context.Employees.FindAsync(id);
         if (employee == null) return NotFound("Employee not found");
-        if (employee.LastName.IsNullOrEmpty()) return BadRequest("Employee last name not found");
-        if (employee.LastName != lastName) return Unauthorized("Employee first name and last name do not match");
+        return Ok(employee);
+    }
+
+    [HttpPost("employees")]
+    public async Task<ActionResult> CreateEmployee(Employee employee)
+    {
+        try
+        {
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.InnerException.Message);
+        }
         return Ok();
     }
 
-    [HttpPost("employees/setlastname")]
-    public async Task<ActionResult> SetPassword(string firstName, string lastName)
+    [HttpPut("employees/{id}")]
+    public async Task<ActionResult> UpdateEmployee(Employee employee)
     {
-        Employee employee = await _context.Employees.FirstOrDefaultAsync(e => e.FirstName == firstName);
+        try
+        {
+            _context.Entry(employee).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.InnerException.Message);
+        }
+        return Ok();
+    }
+
+    [HttpDelete("employees/{id}")]
+    public async Task<ActionResult> DeleteEmployee(int id)
+    {
+        Employee employee = await _context.Employees.FindAsync(id);
+        
         if (employee == null) return NotFound("Employee not found");
-        employee.LastName = lastName;
-        await _context.SaveChangesAsync();
+        
+        try
+        {
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.InnerException.Message);
+        }
         return Ok();
     }
 

@@ -1,0 +1,42 @@
+﻿@page "/lastnamecheck"
+
+@using System.Net;
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<h3>Check your last name</h3>
+
+<div>
+    <label for="name">First Name</label>
+    <input type="text" id="name" @bind="Employee.FirstName" class="form-control" />
+</div>
+<div>
+    <label for="name">Last Name</label>
+    <input type="text" id="name" @bind="Employee.LastName" class="form-control" />
+</div>
+<button class="btn btn-primary mt-2" @onclick="() => HandleSubmit()" >Check Last Name</button>
+
+
+@code {
+
+    private EmployeeDTO Employee { get; set; } = new EmployeeDTO();
+
+    private async void HandleSubmit()
+    {
+        HttpResponseMessage msg = await Http.PostAsJsonAsync(Endpoints.CheckEmployeeName(), Employee);
+        bool navigate = false;
+        switch (msg.StatusCode)
+        {
+            case HttpStatusCode.OK:
+                navigate = await JSRuntime.InvokeAsync<bool>("confirm", "Employee found, would you like to update it?");
+                if (navigate) NavigationManager.NavigateTo($"/employee/{msg.Content.ReadAsStringAsync().Result}");
+                break;
+            case HttpStatusCode.NotFound:
+                navigate = await JSRuntime.InvokeAsync<bool>("confirm", "Employee does not exist, would you like to create it?");
+                if (navigate) NavigationManager.NavigateTo("/employee");
+                break;
+        }
+    }
+}

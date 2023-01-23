@@ -1,0 +1,129 @@
+﻿@page "/employee"
+@page "/employee/{id:int}"
+
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Employee</PageTitle>
+    <h3>Create a new Employee</h3>
+}
+else
+{
+    <PageTitle>Edit an Employee</PageTitle>
+    <h3>Edit an Employee</h3>
+}
+
+<EditForm Model="myEmployee" OnSubmit="HandleSubmit">
+    <div>
+        <label for="name">First name</label>
+        <InputText id="name" @bind-Value="myEmployee.FirstName" class="form-control" />
+    </div>
+    <div>
+        <label for="lastname">Last name</label>
+        <InputText id="lastname" @bind-Value="myEmployee.LastName" class="form-control" />
+    </div>
+    <div>
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="myEmployee.Title" class="form-control" />
+    </div>
+    <div>
+        <label for="titleofcourtesy">Title of courtesy</label>
+        <InputText id="titleofcourtesy" @bind-Value="myEmployee.TitleOfCourtesy" class="form-control" />
+    </div>
+    <div>
+        <label for="birthdate">Birth date</label>
+        <InputDate id="birthdate" @bind-Value="myEmployee.BirthDate" class="form-control" />
+    </div>
+    <div>
+        <label for="hiredate">Hire date</label>
+        <InputDate id="hiredate" @bind-Value="myEmployee.HireDate" class="form-control" />
+    </div>
+    <div>
+        <label for="address">Address</label>
+        <InputText id="address" @bind-Value="myEmployee.Address" class="form-control" />
+    </div>
+    <div>
+        <label for="city">City</label>
+        <InputText id="city" @bind-Value="myEmployee.City" class="form-control" />
+    </div>
+    <div>
+        <label for="region">Region</label>
+        <InputText id="region" @bind-Value="myEmployee.Region" class="form-control" />
+    </div>
+    <div>
+        <label for="postalcode">Postal code</label>
+        <InputText id="postalcode" @bind-Value="myEmployee.PostalCode" class="form-control" />
+    </div>
+    <div>
+        <label for="country">Country</label>
+        <InputText id="country" @bind-Value="myEmployee.Country" class="form-control" />
+    </div>
+    <div>
+        <label for="homephone">Home phone</label>
+        <InputText id="homephone" @bind-Value="myEmployee.HomePhone" class="form-control" />
+    </div>
+    <div>
+        <label for="extension">Extension</label>
+        <InputText id="extension" @bind-Value="myEmployee.Extension" class="form-control" />
+    </div>
+    <div class="mt-2 d-flex justify-content-between">
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    @if (Id != null)
+    {
+        <button type="button" class="btn btn-danger" @onclick="() => Delete()">Delete</button>
+    }
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    string btnText = string.Empty;
+
+    EmployeeDTO myEmployee = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id == null)
+        {
+            // create
+            btnText = "Create Employee";
+        }
+        else
+        {
+            // update
+            myEmployee = await Http.GetFromJsonAsync<EmployeeDTO>(Endpoints.GetUpdateDeleteEmployee(Id.Value));
+            btnText = "Update Employee";
+        }
+    }
+
+    private async void HandleSubmit()
+    {
+        if (Id == null)
+        {
+            // create
+            HttpResponseMessage msg = await Http.PostAsJsonAsync(Endpoints.CreateEmployee(), myEmployee);
+            if (msg.IsSuccessStatusCode) _ = JSRuntime.InvokeVoidAsync("alert", "Employee created");
+            else _ = JSRuntime.InvokeVoidAsync("alert", "Error creating employee");
+        }
+        else
+        {
+            // update
+            HttpResponseMessage msg = await Http.PutAsJsonAsync(Endpoints.GetUpdateDeleteEmployee(Id.Value), myEmployee);
+            if (msg.IsSuccessStatusCode) _ = JSRuntime.InvokeVoidAsync("alert", "Employee updated");
+            else _ = JSRuntime.InvokeVoidAsync("alert", "Error updating employee");
+        }
+    }
+
+    private async void Delete()
+    {
+        HttpResponseMessage msg = await Http.DeleteAsync(Endpoints.GetUpdateDeleteEmployee(Id.Value));
+        if (msg.IsSuccessStatusCode) _ = JSRuntime.InvokeVoidAsync("alert", "Employee deleted");
+        else _ = JSRuntime.InvokeVoidAsync("alert", "Error deleting employee");
+    }
+
+}

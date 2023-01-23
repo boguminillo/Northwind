@@ -1,0 +1,46 @@
+@*Component to add a page selector.
+If there are less than or 7 pages it will have a button for each page plus previous(<) and next(>) buttons.
+If it has more it will also have first(<<) and last(>>) page buttons and only the page buttons near the current page*@
+
+<div class="btn-group">
+    @if (LastPage >= 7)
+    {
+        <button class="btn btn-primario" @onclick="() => CurrentPage = 0">&lt;&lt;</button>
+    }
+    <button class="btn btn-primario" @onclick="() => CurrentPage--">&lt;</button>
+    @if (LastPage <= 7)
+    {
+        @for (int i = 0; i <= LastPage; i++)
+        {
+            // if i is used as a parameter, it must be captured in a local variable
+            int x = i;
+            <button class="btn btn-secondary @((x==CurrentPage) ? "active" : "")" @onclick="() => CurrentPage = x">@(x + 1)</button>
+        }
+    }
+    else
+    {
+        @if (CurrentPage > 2)
+        {
+            <div class="btn btn-secondary pe-none">...</div>
+        }
+        @*Show page buttons from current page -2 to current page + 2*@
+        @for (int i = CurrentPage - 2; i <= CurrentPage + 2; i++)
+        {
+            if (i >= 0 && i <= LastPage)
+            {
+                // if i is used as a parameter, it must be captured in a local variable
+                int x = i;
+                <button class="btn btn-secondary @((x==CurrentPage) ? "active" : "")" @onclick="() => CurrentPage = x">@(x + 1)</button>
+            }
+        }
+        @if (LastPage - CurrentPage > 2)
+        {
+            <div class="btn btn-secondary pe-none">...</div>
+        }
+    }
+    <button class="btn btn-primario" @onclick="() => CurrentPage++">&gt;</button>
+    @if (LastPage >= 7)
+    {
+        <button class="btn btn-primario" @onclick="() => CurrentPage = LastPage">&gt;&gt;</button>
+    }
+</div>

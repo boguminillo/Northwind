@@ -3,6 +3,21 @@
 <PageTitle>Customers</PageTitle>
 <h3>Customers</h3>
 
+<Pagination CurrentPage="@CurrentPage" LastPage="@LastPage" OnPageChange="HandlePageChange" />
+
 @code {
 
+    private int CurrentPage { get; set; } = 0;
+    private int LastPage { get; set; } = 0;
+    private List<CustomerDTO> Customers { get; set; } = new();
+
+    private void HandlePageChange(int page)
+    {
+        CurrentPage = page;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Customers = await Http.GetFromJsonAsync<List<CustomerDTO>>(Endpoints.GetCustomers(CurrentPage));
+    }
 }

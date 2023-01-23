@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace MarvelDex.Components;
+namespace Northwind.Components;
 public partial class Pagination
 {
     [Parameter]

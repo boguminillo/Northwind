@@ -5,7 +5,9 @@
 <PageTitle>Customers</PageTitle>
 <h3>Customers</h3>
 
+<div class="text-center">
 <Pagination CurrentPage="@CurrentPage" LastPage="@LastPage" OnPageChange="HandlePageChange" />
+</div>
 
 @if (Customers != null)
 {
@@ -15,35 +17,15 @@
                 <th>Customer ID</th>
                 <th>Company Name</th>
                 <th>Contact Name</th>
-                <th>Contact Title</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>Region</th>
-                <th>Postal Code</th>
-                <th>Country</th>
-                <th>Phone</th>
-                <th>Fax</th>
-                <th>#Orders</th>
-                <th>#CustomerTypes</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (CustomerDTO customer in Customers)
+            @foreach (CustomerShortDTO customer in Customers)
             {
                 <tr>
                     <td>@customer.CustomerId</td>
                     <td>@customer.CompanyName</td>
                     <td>@customer.ContactName</td>
-                    <td>@customer.ContactTitle</td>
-                    <td>@customer.Address</td>
-                    <td>@customer.City</td>
-                    <td>@customer.Region</td>
-                    <td>@customer.PostalCode</td>
-                    <td>@customer.Country</td>
-                    <td>@customer.Phone</td>
-                    <td>@customer.Fax</td>
-                    <td>@customer.Orders</td>
-                    <td>@customer.CustomerTypes</td>
                 </tr>
             }
         </tbody>
@@ -52,9 +34,8 @@
 
 
 @code {
-
-    private int CurrentPage { get; set; } = 0;
-    private int LastPage { get; set; } = 0;
+    private int CurrentPage { get; set; }
+    private int LastPage { get; set; }
     private List<CustomerShortDTO> Customers { get; set; } = new();
 
     private async void HandlePageChange(int page)
@@ -62,11 +43,13 @@
         CustomerPageDTO data = await Http.GetFromJsonAsync<CustomerPageDTO>(Endpoints.GetCustomersPage(page));
         Customers = data.Customers;
         LastPage = data.LastPage;
-
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        HandlePageChange(0);
+        CustomerPageDTO data = await Http.GetFromJsonAsync<CustomerPageDTO>(Endpoints.GetCustomersPage(1));
+        Customers = data.Customers;
+        LastPage = data.LastPage;
     }
 }

@@ -50,7 +50,7 @@ public class Endpoints
 
     public static string GetYoungerEmployees(DateTime date)
     {
-        return $"https://localhost:7136/northwind/employees/younger/{date}";
+        return $"https://localhost:7136/northwind/employees/younger/{date:yyyy-MM-dd}";
     }
 
 }

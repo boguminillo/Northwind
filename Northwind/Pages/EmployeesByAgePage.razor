@@ -1,0 +1,57 @@
+﻿@page "/employeesbyage"
+
+@inject HttpClient Http
+
+<PageTitle>Employees by age</PageTitle>
+<h3>Employees By Age</h3>
+
+<div class="form-group row">
+    <label for="date" class="col-sm-1 col-form-label">Date ></label>
+    <div class="col-sm-2">
+        <InputDate id="date" @bind-Value="Date" class="form-control" />
+    </div>
+</div>
+
+@if (Employees != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Birth Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Employees)
+            {
+                <tr>
+                    <td>@employee.LastName</td>
+                    <td>@employee.FirstName</td>
+                    <td>@employee.BirthDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private DateTime _date = DateTime.Now;
+    private DateTime Date
+    {
+        get => _date;
+        set
+        {
+            _date = value;
+            _ = GetEmployeesByAge(value);
+        }
+    }
+
+    List<EmployeeDTO> Employees { get; set; }
+
+    private async Task GetEmployeesByAge(DateTime date)
+    {
+        Employees = await Http.GetFromJsonAsync<List<EmployeeDTO>>(Endpoints.GetYoungerEmployees(date));
+        StateHasChanged();
+    }
+}

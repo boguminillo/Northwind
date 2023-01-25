@@ -1,4 +1,6 @@
-﻿namespace NorthwindAPI.Services.MailService;
+﻿using NorthwindAPI.Models;
+
+namespace NorthwindAPI.Services.MailService;
 
 public interface IMailService
 {

@@ -2,6 +2,7 @@
 using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
+using NorthwindAPI.Models;
 
 namespace NorthwindAPI.Services.MailService;
 
@@ -17,7 +18,7 @@ public class MailService : IMailService
     public void SendMail(MailDTO request)
     {
         MimeMessage mail = new();
-        mail.From.Add(MailboxAddress.Parse("Northwind<>"));
+        mail.From.Add(MailboxAddress.Parse("Northwind"));
         mail.To.Add(MailboxAddress.Parse(request.To));
         mail.Subject = request.Subject;
         mail.Body = new TextPart(TextFormat.Html) { Text = request.Body };

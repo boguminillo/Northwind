@@ -69,11 +69,12 @@ else
         <InputText id="extension" @bind-Value="myEmployee.Extension" class="form-control" />
     </div>
     <div class="mt-2 d-flex justify-content-between">
-    <button type="submit" class="btn btn-primary">@btnText</button>
-    @if (Id != null)
-    {
-        <button type="button" class="btn btn-danger" @onclick="() => Delete()">Delete</button>
-    }
+        <button type="submit" class="btn btn-primary">@btnText</button>
+        @if (Id != null)
+        {
+            <button type="button" class="btn btn-dark" @onclick="() => SendMail()">Send via e-mail</button>
+            <button type="button" class="btn btn-danger" @onclick="() => Delete()">Delete</button>
+        }
     </div>
 </EditForm>
 
@@ -117,6 +118,14 @@ else
             if (msg.IsSuccessStatusCode) _ = JSRuntime.InvokeVoidAsync("alert", "Employee updated");
             else _ = JSRuntime.InvokeVoidAsync("alert", "Error updating employee");
         }
+    }
+
+    private async void SendMail()
+    {
+        string mailTo = await JSRuntime.InvokeAsync<string>("prompt", "Enter e-mail address");
+        if (string.IsNullOrEmpty(mailTo)) return;
+        MailToDTO mailToDTO = new() { Employee = myEmployee, MailTo = mailTo };
+        _ = Http.PostAsJsonAsync(Endpoints.SendEmployeeViaMail(), mailToDTO);
     }
 
     private async void Delete()

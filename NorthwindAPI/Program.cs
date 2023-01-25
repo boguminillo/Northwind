@@ -1,4 +1,6 @@
-using NorthwindAPI.Entities;
+global using NorthwindAPI.Models;
+global using NorthwindAPI.Entities;
+using NorthwindAPI.Services.MailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IMailService, MailService>();
 
 builder.Services.AddDbContext<NorthwindContext>();
 

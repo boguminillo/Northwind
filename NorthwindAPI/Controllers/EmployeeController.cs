@@ -95,7 +95,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("employees/mail")]
-    public async Task<ActionResult> SendMail(MailToDTO data)
+    public ActionResult SendMail(MailToDTO data)
     {
         MailDTO mail = new();
         mail.To = data.mailTo;

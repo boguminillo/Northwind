@@ -28,12 +28,12 @@ public class CustomerController : ControllerBase
             .Select(c => new CustomerDTO(c.CustomerId, c.CompanyName, c.ContactName, c.ContactTitle, c.Address, c.City, c.Region, c.PostalCode, c.Country, c.Phone, c.Fax, c.Orders.Count(), c.CustomerTypes.Count()))
             .ToListAsync());
     }
-    
+
     [HttpGet("customers/{page}")]
     public async Task<ActionResult<CustomerPageDTO>> GetCustomers(int page)
     {
         int lastPage = (_context.Customers.Count() - 1) / 5 + 1;
         List<CustomerShortDTO> customers = await _context.Customers.Skip((page - 1) * 5).Take(5).Select(c => new CustomerShortDTO(c.CustomerId, c.CompanyName, c.ContactName)).ToListAsync();
-        return Ok(new CustomerPageDTO {LastPage =lastPage, Customers = customers });
+        return Ok(new CustomerPageDTO { LastPage = lastPage, Customers = customers });
     }
 }

@@ -1,8 +1,7 @@
-﻿using MailKit.Security;
-using MimeKit.Text;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
-using MailKit.Net.Smtp;
-using NorthwindAPI.Models;
+using MimeKit.Text;
 
 namespace NorthwindAPI.Services.MailService;
 

@@ -52,8 +52,9 @@ public class Endpoints
     {
         return $"https://localhost:7136/api/Employee/employees/younger/{date:yyyy-MM-dd}";
     }
-    
-    public static string SendEmployeeViaMail(){
+
+    public static string SendEmployeeViaMail()
+    {
         return "https://localhost:7136/api/Employee/employees/mail";
     }
 

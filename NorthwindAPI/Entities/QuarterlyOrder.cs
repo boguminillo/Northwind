@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NorthwindAPI.Entities;
+﻿namespace NorthwindAPI.Entities;
 
 public partial class QuarterlyOrder
 {

@@ -1,10 +1,5 @@
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MimeKit;
-using MimeKit.Text;
-using NorthwindAPI.Entities;
 using NorthwindAPI.Services.MailService;
 
 namespace NorthwindAPI.Controllers;

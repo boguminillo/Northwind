@@ -1,5 +1,5 @@
-global using NorthwindAPI.Models;
 global using NorthwindAPI.Entities;
+global using NorthwindAPI.Models;
 using NorthwindAPI.Services.MailService;
 
 var builder = WebApplication.CreateBuilder(args);

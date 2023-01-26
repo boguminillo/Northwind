@@ -92,9 +92,11 @@ public class EmployeeController : ControllerBase
     [HttpPost("employees/mail")]
     public ActionResult SendMail(MailToDTO data)
     {
-        MailDTO mail = new();
-        mail.To = data.mailTo;
-        mail.Subject = "This is your Northwind employee data";
+        MailDTO mail = new()
+        {
+            To = data.mailTo,
+            Subject = "This is your Northwind employee data"
+        };
         EmployeeDTO employee = data.employee;
         mail.Body = $@"<h1>Employee data</h1>
                         <p>First name: {employee.FirstName}</p>
@@ -110,8 +112,13 @@ public class EmployeeController : ControllerBase
                         <p>Country: {employee.Country}</p>
                         <p>Home phone: {employee.HomePhone}</p>
                         <p>Extension: {employee.Extension}</p>";
-
-        _mailService.SendMail(mail);
+        try
+        {
+            _mailService.SendMail(mail);
+        } catch (Exception)
+        {
+            return Unauthorized("Mail not sent");
+        }
 
         return Ok();
     }

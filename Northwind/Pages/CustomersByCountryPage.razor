@@ -69,12 +69,12 @@
         set
         {
             _selectedCountry = value;
-            GetCustomers();
+            _ = GetCustomers();
         }
     }
     private string _selectedCountry = string.Empty;
 
-    List<CustomerDTO> Customers = new();
+    List<CustomerDTO> Customers;
 
     protected override async Task OnInitializedAsync()
     {

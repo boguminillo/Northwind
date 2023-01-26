@@ -125,7 +125,9 @@ else
         string mailTo = await JSRuntime.InvokeAsync<string>("prompt", "Enter e-mail address");
         if (string.IsNullOrEmpty(mailTo)) return;
         MailToDTO mailToDTO = new() { Employee = myEmployee, MailTo = mailTo };
-        _ = Http.PostAsJsonAsync(Endpoints.SendEmployeeViaMail(), mailToDTO);
+        HttpResponseMessage msg = await Http.PostAsJsonAsync(Endpoints.SendEmployeeViaMail(), mailToDTO);
+        if (msg.IsSuccessStatusCode) _ = JSRuntime.InvokeVoidAsync("alert", "Employee sent via e-mail");
+        else _ = JSRuntime.InvokeVoidAsync("alert", "Error sending employee via e-mail");
     }
 
     private async void Delete()

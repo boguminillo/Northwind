@@ -18,7 +18,7 @@ public class MailService : IMailService
     public void SendMail(MailDTO request)
     {
         MimeMessage mail = new();
-        mail.From.Add(MailboxAddress.Parse("Northwind"));
+        mail.From.Add(MailboxAddress.Parse($"Northwind<{_config.GetSection("Mail").GetSection("Username").Value}>"));
         mail.To.Add(MailboxAddress.Parse(request.To));
         mail.Subject = request.Subject;
         mail.Body = new TextPart(TextFormat.Html) { Text = request.Body };
